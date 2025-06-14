@@ -7,6 +7,7 @@ import chromadb
 import pytesseract
 from PIL import Image
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from chromadb.config import Settings, DEFAULT_TENANT, DEFAULT_DATABASE
 from dotenv import load_dotenv
@@ -28,7 +29,13 @@ class Query(BaseModel):
     image: str | None = None
 
 app = FastAPI()
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],            
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 @app.post("/api", summary="Ask the TDS Virtual TA")
 async def answer(q: Query):
     question = q.question.strip()
